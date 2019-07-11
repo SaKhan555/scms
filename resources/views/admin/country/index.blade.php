@@ -53,16 +53,6 @@
 	@section('script')
 
 <script>
-	var delete_data = `
-<div class="col-md-12">
-<p>Are you sure to Delete?</p>
-<div style="border-top:1px solid lightgrey;">
-<div class="float-right mt-1">
-<button type="button" data-dismiss="modal" class="btn btn-danger btn-sm">Cancel</button>
-<button type="button" class="btn btn-success btn-sm" id="btn_delete">Delete</button>
-</div>
-</div>
-</div>`;
 var formData = `<form>
 <div class="form-group">
 <label for="name">Name: </label>
