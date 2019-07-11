@@ -25,6 +25,7 @@ Route::group(['prefix' => 'admin','as' => 'admin.','namespace' => 'Admin'], func
 	Route::post('/country/reload', 'CountryController@reload');
 
 	Route::resource('city', 'CityController');
+	Route::post('/city/reload', 'CityController@reload');
 		// Vendor routes
 	Route::resource('vendor', 'VendorController');
 	//ajax request for getting country cities
