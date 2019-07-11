@@ -74,12 +74,13 @@ public function reload()
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+   public function edit($id)
     {
-       $city = City::find($id);
-       $countries = Country::all();
-       return view('admin.city.edit',compact('city','countries'));
-    }
+      $countries = Country::all();
+      $city = City::find($id);
+        $returnHTML = view('admin.city.edit')->with(['countries'=>$countries,'city'=>$city])->render();
+        return response()->json(['success' => true, 'edit_html'=>$returnHTML]);
+}
 
     /**
      * Update the specified resource in storage.
@@ -88,17 +89,20 @@ public function reload()
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        $this->validate($request,[
-            'country'=>'required',
-            'name'=>'required|max:60|unique:cities',
+        $validator = \Validator::make($request->all(), [
+            'id' => 'required',
+            'country_id' => 'required',
+            'name' => 'required|max:255|unique:cities,name,'.request('id'),
         ]);
-
-   $city = City::find($id)->update(['country_id' => $request->country,'name' => $request->name]);
-   if($city){
-    return redirect()->route('admin.city.index')->with('status','city updated successfully');
-   }
+        if ($validator->fails())
+        {
+            return response()->json(['errors'=>$validator->errors()->all()]);
+        }else{
+            $country = City::find(request('id'))->update(['country_id' => $request->country_id,'name' => $request->name]);
+            return response()->json(['success'=>'Record is successfully updated']);
+        } 
     }
 
     /**
@@ -109,9 +113,9 @@ public function reload()
      */
     public function destroy($id)
     {
-        $city = City::find($id)->delete();
-        if($city){
-            return redirect()->route('admin.city.index')->with('status','City Deleted');
+        $deleted = City::find(request('id'))->delete();
+            if ($deleted) {
+            return response()->json(['success'=>'Record is successfully deleted']);
         }
     }
 }
