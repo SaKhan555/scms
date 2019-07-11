@@ -68,9 +68,9 @@ let country_id = edit_country_ele.attr('data-id');
   })
   .done(function(response_data) {
         if(response_data.errors){
+                         $('#errors').html('');
                         $.each(response_data.errors, function(key, value){
                              modalDismiss();
-                            $('#errors').html('');
                             $('#errors').show();
                             $('#errors').append('<li class="badge badge-danger">'+value+'</li>');
                             dismiss_alert('#errors');
