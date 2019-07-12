@@ -13,7 +13,7 @@
 		required="true" value="{{ ucfirst($city->name) }}" data-id="{{$city->id}}">
 	</div>
 	<div class="form-group text-right">
-		<button type="button" data-dismiss="modal" class="btn btn-danger btn-sm">Cancel</button>
+		<button type="button" data-dismiss="modal" class="btn btn-danger btn-sm">Cancel  <i class="fa fa-times"></i></button>
 		<button type="button" class="btn btn-success btn-sm" id="btn_update">Update <i class="fa fa-check"></i></button>
 	</div>
 </form>
