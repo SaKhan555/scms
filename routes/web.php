@@ -42,6 +42,7 @@ Route::group(['prefix' => 'admin','as' => 'admin.','namespace' => 'Admin'], func
 	Route::resource('item_category','ItemCategoryController');
 			// Item Category
 	Route::resource('item','ItemController');
+		Route::post('/item/reload', 'ItemController@reload');
 		// Warehouse Routes
 	Route::resource('warehouse','WarehouseController');
 
