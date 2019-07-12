@@ -5,6 +5,42 @@ $.ajaxSetup({
     }
 });
 
+function addDataWithAjax(data_url,data_obj,error_msg_div,success_msg_div,reload_url,div_to_reload){
+$.ajax({
+    url: data_url,
+    type: 'POST',
+    data:data_obj,//data:{param:value,},
+})
+.done(function(response_data) {
+     modalDismiss();
+    if(response_data != ""){
+            if(response_data.errors){
+            $(error_msg_div).html('');
+            $.each(response_data.errors, function(key, value){
+                $(error_msg_div).show();
+                $(error_msg_div).append(`<li class="badge badge-danger">${value}</li>`);
+                dismiss_alert(error_msg_div);
+            });
+        }else{
+            reload(reload_url,div_to_reload);
+            $(success_msg_div).html('');
+            $(success_msg_div).show();
+            $(success_msg_div).append(`<li class="badge badge-success">${response_data.success}</li>`);
+            dismiss_alert(success_msg_div);
+        } 
+    }else{
+        console.log(response_data);
+    }
+})
+.fail(function() {
+    console.log("error");
+})
+.always(function() {
+    console.log("complete");
+});
+}
+
+
 var delete_data = `
 <div class="col-md-12">
 <h6 class="text-center text-danger" style="margin-bottom: 20px;">Are you sure to Delete this?</h6>
