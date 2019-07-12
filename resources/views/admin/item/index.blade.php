@@ -25,7 +25,7 @@ form span {
 							<th>Actions</th>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody id="reload_div">
 						@php
 						$sr = $items->perPage() * ($items->currentPage() - 1) + 1
 						@endphp
@@ -72,12 +72,10 @@ form span {
 	@section('script')
 
 	<script>
-
-		var formData = `<form action="{{ route('admin.item.store') }}" method="POST" enctype="multipart/form-data">
-		{{ csrf_field() }}
+		var formData = `<form enctype="multipart/form-data">
 		<div class="form-group">
 		<label>Item Category <span>*</span> </label>
-		<select name="item_category" class="form-control" required="true" autofocus="autofocus">
+		<select name="item_category" id="item_category" class="form-control" required="true" autofocus="autofocus">
 		<option selected disabled value="">Select Item Category</option>
 		@foreach($item_categories as $item_category)
 		<option value="{{ $item_category->id }}">{{ $item_category->name }}</option>
@@ -90,13 +88,20 @@ form span {
 		</div>	
 		<div class="form-group" >
 		<label>Item Details: </label>
-		<textarea name="details" class="form-control"></textarea>
+		<textarea name="details" id="details" class="form-control"></textarea>
 		</div>
 		<div class="form-group" >
 		<label>Item Image: </label>
-		<input type="file" name="image" class="form-control" placeholder="Upload item image">
+		<input type="file" id="image" name="image" class="form-control" placeholder="Upload item image">
 		</div>
-		<button type="submit" class="btn btn-success btn-block">Submit</button>
+		<div class="form-group text-right">
+		<button type="button" data-dismiss="modal" class="btn btn-danger btn-sm">Cancel <i class="fa fa-times"></i></button>
+		<button type="button" class="btn btn-success btn-sm" id="btn_add">Submit <i class="fa fa-check"></i></button>
+		</div>
+				<hr />
+		<code>Note: Item code will generate automatically by adding item.</code>
+		<hr />
+
 		</form>`;
 
 	</script>

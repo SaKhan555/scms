@@ -16,11 +16,19 @@ class ItemController extends Controller
 *
 * @return \Illuminate\Http\Response
 */
+
+public function reload()
+    {
+        $items = Item::orderBy('name', 'ASC')->paginate(8);
+         $item_categories = ItemCategory::orderBy('name','ASC')->get(['id','name']);
+        $returnHTML = view('admin.item.reload')->with(['items'=>$items,'item_categories'=>$item_categories])->render();
+        return response()->json(array('success' => true, 'html'=>$returnHTML));
+}
+
 public function index()
 {
-    $items = Item::orderBy('name','ASC')->paginate(7);
+    $items = Item::orderBy('name','ASC')->paginate(8);
     $item_categories = ItemCategory::orderBy('name','ASC')->get(['id','name']);
-
     return view('admin.item.index',compact('items','item_categories'));
 }
 
@@ -42,36 +50,45 @@ public function create()
 */
 public function store(Request $request)
 {
-    $category_id = $request->item_category;
+        $validator = \Validator::make($request->all(), [
+            'item_category_id' => 'required',
+            'name' => 'required|unique:items|max:255|min:3',
+            'details' => 'max:191',
+        ]);
+        if ($validator->fails())
+        {
+            return response()->json(['errors'=>$validator->errors()->all()]);
+        }else{
 
-    $this->validate($request,[
-        'item_category' => 'required',
-        'details' => 'max:191',
-        'name' => Rule::unique('items')->where(function ($query) use ($category_id) {
-            return $query->where('item_category_id',$category_id);
-        }),
-
-    ]);
-
-    if($request->hasfile('image')) {
-        $photo = $request->file('image');
+    if($request->hasfile('image_url')) {
+        $photo = $request->file('image_url');
         $photoname = $photo->getClientOriginalName();
         $photoname = $this->item_code_number($request->name).'-'.$photoname;
         $photo->move('uploads/item/', $photoname);
     }else{
         $photoname = null;
     }
-
     Item::create([
         'user_id' => '1',
         'item_code_number' => $this->item_code_number($request->name),
-        'item_category_id' => $request->item_category,
+        'item_category_id' => $request->item_category_id,
         'name' => $request->name,
         'image_url' => $photoname,
         'details' => $request->details,
     ]);
+            return response()->json(['success'=>'Record is successfully added']);
+        } 
 
-    return redirect()->route('admin.item.index')->with('status','Item '.$this->item_code_number ($request->name).' added.');
+
+    // $category_id = $request->item_category;
+
+    // $this->validate($request,[
+    //     'item_category' => 'required',
+    //     'name' => Rule::unique('items')->where(function ($query) use ($category_id) {
+    //         return $query->where('item_category_id',$category_id);
+    //     }),
+    // ]);
+
 }
 
 /**
