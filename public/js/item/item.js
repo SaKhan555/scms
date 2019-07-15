@@ -1,6 +1,8 @@
 document.querySelector('#init_modal').onclick = function() {
-    modalInit(formData, 'Add new Item');
+    modalInit(formDataString, 'Add new Item');
 };
+
+
 $(document).on('click','#btn_add',function(){
 let item_category = $('#item_category').val();
 let item_name = $('#name').val();
@@ -10,6 +12,11 @@ if(item_category == null || item_name == ""){
     modalInit("<h6 class='alert alert-danger'>Item Category and Item Name fields are required.</h6><hr />", 'Error!');
     return;
 };
-var data = {item_category_id:item_category,name:item_name,details:item_details,image_url:file}
-addDataWithAjax('/admin/item',data,"#errors","#success_msg","/admin/item/reload","reload_div")
+ var data = new FormData();
+ data.append('item_category_id',item_category);
+ data.append('name',item_name);
+ data.append('details',item_details);
+ data.append('image_url',file);
+var sendData = data;
+addDataWithAjax('/admin/item',sendData,"#errors","#success_msg","/admin/item/reload","reload_div")
 });

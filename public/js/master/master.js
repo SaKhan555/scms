@@ -9,11 +9,15 @@ function addDataWithAjax(data_url,data_obj,error_msg_div,success_msg_div,reload_
 $.ajax({
     url: data_url,
     type: 'POST',
+    dataType:'json',
     data:data_obj,//data:{param:value,},
+enctype: 'multipart/form-data',
+ processData: false,  // tell jQuery not to process the data
+contentType: false,   // tell jQuery not to set contentType
 })
 .done(function(response_data) {
      modalDismiss();
-    if(response_data != ""){
+    if(response_data.length != 0 || response_data != null || response_data != "" ){
             if(response_data.errors){
             $(error_msg_div).html('');
             $.each(response_data.errors, function(key, value){

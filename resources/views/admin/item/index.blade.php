@@ -72,7 +72,7 @@ form span {
 	@section('script')
 
 	<script>
-		var formData = `<form enctype="multipart/form-data">
+		var formDataString = `<form enctype="multipart/form-data">
 		<div class="form-group">
 		<label>Item Category <span>*</span> </label>
 		<select name="item_category" id="item_category" class="form-control" required="true" autofocus="autofocus">
@@ -98,10 +98,9 @@ form span {
 		<button type="button" data-dismiss="modal" class="btn btn-danger btn-sm">Cancel <i class="fa fa-times"></i></button>
 		<button type="button" class="btn btn-success btn-sm" id="btn_add">Submit <i class="fa fa-check"></i></button>
 		</div>
-				<hr />
+		<hr />
 		<code>Note: Item code will generate automatically by adding item.</code>
 		<hr />
-
 		</form>`;
 
 	</script>

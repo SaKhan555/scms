@@ -60,7 +60,7 @@ public function store(Request $request)
             return response()->json(['errors'=>$validator->errors()->all()]);
         }else{
 
-    if($request->hasfile('image_url')) {
+    if($request->hasFile('image_url')) {
         $photo = $request->file('image_url');
         $photoname = $photo->getClientOriginalName();
         $photoname = $this->item_code_number($request->name).'-'.$photoname;
