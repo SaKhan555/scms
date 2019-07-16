@@ -19,10 +19,10 @@ class ItemController extends Controller
 
 public function reload()
     {
-        $items = Item::orderBy('name', 'ASC')->paginate(8);
-         $item_categories = ItemCategory::orderBy('name','ASC')->get(['id','name']);
-        $returnHTML = view('admin.item.reload')->with(['items'=>$items,'item_categories'=>$item_categories])->render();
-        return response()->json(array('success' => true, 'html'=>$returnHTML));
+    $items = Item::orderBy('name', 'ASC')->paginate(8);
+     $item_categories = ItemCategory::orderBy('name','ASC')->get(['id','name']);
+    $returnHTML = view('admin.item.reload')->with(['items'=>$items,'item_categories'=>$item_categories])->render();
+    return response()->json(array('success' => true, 'html'=>$returnHTML));
 }
 
 public function index()
@@ -111,10 +111,10 @@ public function show($id)
 */
 public function edit($id)
 {
-
     $item = Item::find($id);
     $item_categories = ItemCategory::orderBy('name')->get(['id','name']);
-    return view('admin.item.edit',compact('item','item_categories'));
+    $returnHTML = view('admin.item.edit')->with(['item'=>$item,'item_categories'=>$item_categories])->render();
+    return response()->json(['success' => true, 'edit_html'=>$returnHTML]);
 }
 
 /**
