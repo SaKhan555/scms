@@ -44,6 +44,22 @@ contentType: false,   // tell jQuery not to set contentType
 });
 }
 
+function editFormWithAjax(url_with_id,send_data_obj,modal_title){
+  $.ajax({
+      url: url_with_id,   // abc/id/edit
+      type: 'GET',
+     data:send_data_obj,
+  })
+  .done(function(response) {
+    if(response.success){
+        modalInit(response.edit_html, modal_title);  
+    }else{
+        modalInit(`<h6 class='alert alert-danger'>Something went wrong try Again</h6><hr />`,
+                 `Error <i class="fas fa-exclamation-triangle"></i>`);  
+    }
+  });
+}
+
 
 var delete_data = `
 <div class="col-md-12">
