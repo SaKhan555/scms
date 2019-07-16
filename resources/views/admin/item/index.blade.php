@@ -44,9 +44,7 @@ form span {
 								<a href="{{ route('admin.item.show',[$item->id]) }}" class="btn btn-info btn-sm">
 									<i class="fa fa-eye"></i>
 								</a>
-								<a href="{{ route('admin.item.edit',[$item->id]) }}" class="btn btn-primary btn-sm">
-									<i class="fa fa-edit"></i>
-								</a>
+								<button type="button" data-id="{{ $item->id }}" class="btn btn-sm btn-primary btn_edit">Edit <i class="fa fa-edit"></i></button>
 
 								<form action="{{ route('admin.item.destroy',[$item->id]) }}" method="POST" accept-charset="utf-8" style="display: inline-block !important;">
 									@method('Delete')
