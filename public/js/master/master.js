@@ -84,7 +84,7 @@ function modalDismiss(){
 }
 
 function reload(url,response_div){
-    if(url.length == 0 || url == "" || response_div.length == 0 || response_div == "" response_div == "undefined"){
+    if(url.length == 0 || url == "" || response_div.length == 0 || response_div == "" || response_div == "undefined"){
         modalInit(`<h6 class='alert alert-danger'>URL and Response Div is required.!</h6><hr />`,`Error <i class="fas fa-exclamation-triangle"></i>`);  
         return;
     }
