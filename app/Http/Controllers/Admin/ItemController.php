@@ -69,7 +69,7 @@ public function store(Request $request)
         $photoname = null;
     }
     Item::create([
-        'user_id' => '1',
+        'user_id' => 1,
         'item_code_number' => $this->item_code_number($request->name),
         'item_category_id' => $request->item_category_id,
         'name' => $request->name,

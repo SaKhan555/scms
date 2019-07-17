@@ -3,7 +3,7 @@
 				<tr>
 					<th>Item Category: </th>
 					<td>
-											<select name="item_category" class="form-control">
+					<select name="item_category" class="form-control">
 						@foreach($item_categories as $item_category)
 						@if($item_category->id == $item->item_category_id)
 						<option value="{{ $item_category->id }}" selected="true"> {{ $item_category->name }}</option>
@@ -27,10 +27,14 @@
 				<tr>
 					<th>Image: </th>
 					<td colspan="3">
-											<input type="file" name="image" placeholder="Upload item image">
+					<input type="file" name="image" placeholder="Upload item image">
+					@if(!is_null($item->image_url))
 					<button type="button" data-toggle="modal" data-target = "#e_img_modal" title="View image" class="btn btn-sm btn-outline-secondary">
 						<i class="fa fa-eye"></i>
 					</button>
+					@else
+						<code>Image not found</code> <i class="fa fa-times" style="font-size:1rem;color:red"></i>
+					@endif
 					</td>
 				</tr>
 				<tr>
@@ -46,14 +50,12 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-body">
-				<button type="button" class="close rounded-circle btn-sm text-danger" data-dismiss="modal" aria-label="Close" style="margin: -21px 2px !important;
-				padding: 0px !important;
-				height: 0px;
-				width: 0px;">
-				&times;
-			</button>
-			<img src="{{ asset('uploads/item/'.$item->image_url) }}" alt="img not found" class="img-fluid">
+				@if(!is_null($item->image_url))
+					<img src="{{ asset('uploads/item/'.$item->image_url) }}" alt="{{ $item->name }}" class="img-fluid">
+				@else
+					<img src="{{ asset('images/img_not_found.png') }}" alt="" style="margin: 15px 100px;">
+				@endif
+			</div>
 		</div>
 	</div>
-</div>
 </div>
