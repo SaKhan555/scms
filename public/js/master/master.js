@@ -6,6 +6,7 @@ $.ajaxSetup({
 });
 
 function addDataWithAjax(data_url,data_obj,error_msg_div,success_msg_div,reload_url,div_to_reload){
+    $('#loading').css('display', 'block');
     $.ajax({
         url: data_url,
         type: 'POST',
@@ -35,6 +36,7 @@ contentType: false,   // tell jQuery not to set contentType
         }else{
             console.log(response_data);
         }
+        $('#loading').css('display', 'none');
     })
     .fail(function() {
         console.log("error");
@@ -53,9 +55,11 @@ $.ajax({
 .done(function(response) {
     if(response.success){
         modalInit(response.edit_html, modal_title);  
+ 
     }else{
         modalInit(`<h6 class='alert alert-danger'>Something went wrong try Again</h6><hr />`,`Error <i class="fas fa-exclamation-triangle"></i>`);  
     }
+    $('#loading').css('display', 'none');
 });
 }
 
@@ -102,4 +106,13 @@ function dismiss_alert(class_div_to_remove){
     $(class_div_to_remove).fadeTo(2000, 500).slideUp(500, function() {
     $(class_div_to_remove).slideUp(500);
     });
+}
+
+function fieldsValidation(btn,fields = array()) {
+    for (var i = 0; i < fields.length; i++) {
+        if(fields[i].val() == "" ||fields[i].val() == "undefined" ||fields[i].val() == null){
+            $(btn).html(`Add City <div class="spinner-grow spinner-grow-sm" role="status"><span class="sr-only">Loading...</span>
+            </div>`);
+        }
+    }
 }
