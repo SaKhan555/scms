@@ -1,0 +1,9 @@
+.modal_xl {
+    width: 80em;
+    margin: 0px -45px;
+    border-radius:0px !important;
+}
+
+input,select,textarea,.btn, .btn-sm,.alert, .modal-content {
+    border-radius:0px !important;
+}
