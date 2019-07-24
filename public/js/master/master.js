@@ -36,20 +36,20 @@ contentType: false,   // tell jQuery not to set contentType
         }else{
             console.log(response_data);
         }
-        $('#loading').css('display', 'none');
     })
     .fail(function() {
         console.log("error");
     })
     .always(function() {
-        console.log("complete");
+        $('#loading').css('display', 'none');
+
     });
 }
 
-function editFormWithAjax(url_with_id,send_data_obj,modal_title){
+function editFormWithAjax(url,send_data_obj,modal_title){
 $.ajax({
-    url: url_with_id,   // abc/id/edit
-    type: 'GET',
+    url: url,   // abc/id/edit
+    type: 'POST',
     data:send_data_obj,
 })
 .done(function(response) {
@@ -59,7 +59,6 @@ $.ajax({
     }else{
         modalInit(`<h6 class='alert alert-danger'>Something went wrong try Again</h6><hr />`,`Error <i class="fas fa-exclamation-triangle"></i>`);  
     }
-    $('#loading').css('display', 'none');
 });
 }
 
