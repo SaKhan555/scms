@@ -10,8 +10,6 @@ $sr = $items->perPage() * ($items->currentPage() - 1) + 1
     <td>
         {{ ucfirst($item->item_category->name) }}
     </td>
-    <td>{{ $item->user_id }}</td>
-    <td>{{ $item->created_at->toDayDateTimeString() }}</td>
     <td>
         <a href="{{ route('admin.item.show',[$item->id]) }}" class="btn btn-info btn-sm">
             <i class="fa fa-eye"></i>

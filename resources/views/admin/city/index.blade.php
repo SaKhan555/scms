@@ -1,4 +1,3 @@
-
 @extends('template.master') @section('title', 'Countries')
 @section('content')
 	<div class="card">

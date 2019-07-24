@@ -11,64 +11,64 @@ use App\Admin\Item;
 
 class ItemController extends Controller
 {
-/**
-* Display a listing of the resource.
-*
-* @return \Illuminate\Http\Response
-*/
+    /**
+    * Display a listing of the resource.
+    *
+    * @return \Illuminate\Http\Response
+    */
 
-public function reload()
+    public function reload()
     {
-    $items = Item::orderBy('name', 'ASC')->paginate(8);
-     $item_categories = ItemCategory::orderBy('name','ASC')->get(['id','name']);
-    $returnHTML = view('admin.item.reload')->with(['items'=>$items,'item_categories'=>$item_categories])->render();
-    return response()->json(array('success' => true, 'html'=>$returnHTML));
-}
+        $items = Item::orderBy('name', 'ASC')->paginate(8);
+        $item_categories = ItemCategory::orderBy('name', 'ASC')->get(['id','name']);
+        $returnHTML = view('admin.item.reload')->with(['items'=>$items,'item_categories'=>$item_categories])->render();
+        return response()->json(array('success' => true, 'html'=>$returnHTML));
+    }
 
-public function index()
-{
-    $items = Item::orderBy('name','ASC')->paginate(8);
-    $item_categories = ItemCategory::orderBy('name','ASC')->get(['id','name']);
-    return view('admin.item.index',compact('items','item_categories'));
-}
+    public function index()
+    {
+        $items = Item::orderBy('name', 'ASC')->paginate(8);
+        $item_categories = ItemCategory::orderBy('name', 'ASC')->get(['id','name']);
+        return view('admin.item.index', compact('items', 'item_categories'));
+    }
 
-/**
-* Show the form for creating a new resource.
-*T
-* @return \Illuminate\Http\Response
-*/
-public function create()
-{
+    /**
+    * Show the form for creating a new resource.
+    *T
+    * @return \Illuminate\Http\Response
+    */
+    public function create()
+    {
+    }
 
-}
-
-/**
-* Store a newly created resource in storage.
-*
-* @param  \Illuminate\Http\Request  $request
-* @return \Illuminate\Http\Response
-*/
-public function store(Request $request)
-{
+    /**
+    * Store a newly created resource in storage.
+    *
+    * @param  \Illuminate\Http\Request  $request
+    * @return \Illuminate\Http\Response
+    */
+    public function store(Request $request)
+    {
+        $category_id = $request->item_category_id;
         $validator = \Validator::make($request->all(), [
             'item_category_id' => 'required',
-            'name' => 'required|unique:items|max:255|min:3',
+            'name' => Rule::unique('items')->where(function ($query) use ($category_id) {
+                return $query->where('item_category_id', $category_id);
+            }),
             'details' => 'max:191',
         ]);
-        if ($validator->fails())
-        {
+        if ($validator->fails()) {
             return response()->json(['errors'=>$validator->errors()->all()]);
-        }else{
-
-    if($request->hasFile('image_url')) {
-        $photo = $request->file('image_url');
-        $photoname = $photo->getClientOriginalName();
-        $photoname = $this->item_code_number($request->name).'-'.$photoname;
-        $photo->move('uploads/item/', $photoname);
-    }else{
-        $photoname = null;
-    }
-    Item::create([
+        } else {
+            if ($request->hasFile('image_url')) {
+                $photo = $request->file('image_url');
+                $photoname = $photo->getClientOriginalName();
+                $photoname = $this->item_code_number($request->name).'-'.$photoname;
+                $photo->move('uploads/item/', $photoname);
+            } else {
+                $photoname = null;
+            }
+            Item::create([
         'user_id' => 1,
         'item_code_number' => $this->item_code_number($request->name),
         'item_category_id' => $request->item_category_id,
@@ -77,10 +77,10 @@ public function store(Request $request)
         'details' => $request->details,
     ]);
             return response()->json(['success'=>'Record is successfully added']);
-        } 
+        }
 
 
-    // $category_id = $request->item_category;
+        // $category_id = $request->item_category;
 
     // $this->validate($request,[
     //     'item_category' => 'required',
@@ -88,46 +88,45 @@ public function store(Request $request)
     //         return $query->where('item_category_id',$category_id);
     //     }),
     // ]);
+    }
 
-}
+    /**
+    * Display the specified resource.
+    *
+    * @param  int  $id
+    * @return \Illuminate\Http\Response
+    */
+    public function show($id)
+    {
+        $item = Item::find($id);
+        return view('admin.item.show', compact('item'));
+    }
 
-/**
-* Display the specified resource.
-*
-* @param  int  $id
-* @return \Illuminate\Http\Response
-*/
-public function show($id)
-{
-    $item = Item::find($id);
-    return view('admin.item.show',compact('item'));
-}
+    /**
+    * Show the form for editing the specified resource.
+    *
+    * @param  int  $id
+    * @return \Illuminate\Http\Response
+    */
+    public function edit()
+    {
+        $item = Item::find(request('id'));
+        $item_categories = ItemCategory::orderBy('name')->get(['id','name']);
+        $returnHTML = view('admin.item.edit')->with(['item'=>$item,'item_categories'=>$item_categories])->render();
+        return response()->json(['success' => true, 'edit_html'=>$returnHTML]);
+    }
 
-/**
-* Show the form for editing the specified resource.
-*
-* @param  int  $id
-* @return \Illuminate\Http\Response
-*/
-public function edit($id)
-{
-    $item = Item::find($id);
-    $item_categories = ItemCategory::orderBy('name')->get(['id','name']);
-    $returnHTML = view('admin.item.edit')->with(['item'=>$item,'item_categories'=>$item_categories])->render();
-    return response()->json(['success' => true, 'edit_html'=>$returnHTML]);
-}
-
-/**
-* Update the specified resource in storage.
-*
-* @param  \Illuminate\Http\Request  $request
-* @param  int  $id
-* @return \Illuminate\Http\Response
-*/
-public function update(Request $request, $id)
-{
-    $category_id = $request->item_category;
-    $this->validate($request,[
+    /**
+    * Update the specified resource in storage.
+    *
+    * @param  \Illuminate\Http\Request  $request
+    * @param  int  $id
+    * @return \Illuminate\Http\Response
+    */
+    public function update(Request $request, $id)
+    {
+        $category_id = $request->item_category;
+        $this->validate($request, [
         'item_category' => 'required',
         'name' => Rule::unique('items')->ignore($id)->where(function ($query) use ($category_id) {
             return $query->where('item_category_id', $category_id);
@@ -135,22 +134,22 @@ public function update(Request $request, $id)
 
     ]);
 
-    $item = Item::find($id);
+        $item = Item::find($id);
 
-    if($request->hasfile('image')) { 
-        if($item->image_url != '' && file_exists(public_path().'/uploads/item/'.$item->image_url )) {
-            unlink(public_path().'/uploads/item/'.$item->image_url);
+        if ($request->hasfile('image')) {
+            if ($item->image_url != '' && file_exists(public_path().'/uploads/item/'.$item->image_url)) {
+                unlink(public_path().'/uploads/item/'.$item->image_url);
+            }
+
+            $photo = $request->file('image');
+            $photoname = $photo->getClientOriginalName();
+            $photoname = $this->item_code_number($request->name).'-'.$photoname;
+            $photo->move('uploads/item/', $photoname);
+        } else {
+            $photoname = $item->image_url;
         }
 
-        $photo = $request->file('image');
-        $photoname = $photo->getClientOriginalName();
-        $photoname = $this->item_code_number($request->name).'-'.$photoname;
-        $photo->move('uploads/item/', $photoname);
-    } else {
-        $photoname = $item->image_url;
-    }
-
-    $item->update([
+        $item->update([
         'user_id' => '1',
         'item_category_id' => $request->item_category,
         'name' => $request->name,
@@ -158,31 +157,31 @@ public function update(Request $request, $id)
         'details' => $request->details,
     ]);
 
-    return redirect()->route('admin.item.index')->with('status','updated.');
+        return redirect()->route('admin.item.index')->with('status', 'updated.');
+    }
 
-}
-
-/**
-* Remove the specified resource from storage.
-*
-* @param  int  $id
-* @return \Illuminate\Http\Response
-*/
-public function destroy($id)
-{
+    /**
+    * Remove the specified resource from storage.
+    *
+    * @param  int  $id
+    * @return \Illuminate\Http\Response
+    */
+    public function destroy($id)
+    {
 //
-}
+    }
 
-public function item_code_number ($request_name){
-    $count_item = Item::count();
-++$count_item; // add 1;
-$len = strlen($count_item);
+    public function item_code_number($request_name)
+    {
+        $count_item = Item::count();
+        ++$count_item; // add 1;
+        $len = strlen($count_item);
 
-for($i = $len; $i < 3; ++$i) {
-    $count_item = '0'.$count_item;
-}
-$item_name = strtoupper(substr($request_name,0,2));
-$item_code_number =  'ITEM-'.$item_name.'-'.$count_item;
-return $item_code_number;
-}
+        for ($i = $len; $i < 3; ++$i) {
+            $count_item = '0'.$count_item;
+        }
+        $item_name = strtoupper(substr($request_name, 0, 2));
+        $item_code_number =  'ITEM-'.$item_name.'-'.$count_item;
+        return $item_code_number;
+    }
 }

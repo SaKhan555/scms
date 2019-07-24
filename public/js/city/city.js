@@ -5,12 +5,10 @@ document.querySelector('#init_modal').onclick = function() {
 };
 
 $(document).on("click", "#btn_add", function(event){
+      fieldsValidation("#btn_add",[$('#country'),$('#name')]);
     let country_id = $('#country').val();
     let city_name = $('#name').val();
-    if(country_id == null|| city_name == ""){
-        modalInit("<h6 class='alert alert-danger'>All fields are required</h6><hr />", 'Error!');
-        return;
-    }
+
     $.ajax({
         url: '/admin/city',
         type: 'POST',

@@ -15,6 +15,7 @@
     <link href="{{ asset('template/vendor/datatables/dataTables.bootstrap4.css') }}" rel="stylesheet">
     <!-- Custom styles for this template-->
     <link href="{{ asset('template/css/sb-admin.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/custome.css') }}" rel="stylesheet">
     <!-- Select2 Stylesheets -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 

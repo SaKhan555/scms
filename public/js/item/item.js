@@ -1,6 +1,7 @@
-document.querySelector('#init_modal').onclick = function() {
-    modalInit(formDataString, 'Add new Item');
-};
+$(document).on('click','#init_modal',function(){
+  modalLayoutReset();
+  modalInit(formDataString, 'Add new Item');
+});
 
 $(document).on('click','#btn_add',function(){
 let item_category = $('#item_category').val();
@@ -20,9 +21,15 @@ var sendData = data;
 addDataWithAjax('/admin/item',sendData,"#errors","#success_msg","/admin/item/reload","reload_div")
 });
 
-    $(document).on("click", ".btn_edit", function(event){
+  $(document).on("click", ".btn_edit", function(event){
+  let modal_dilog = document.querySelector("#masterModal .modal-dialog");
   let item_id = $(this).attr('data-id');
-    let send_item_id = {id:item_id};
-    document.querySelector('#masterModal .modal-dialog').classList.add('modal-lg')
-  editFormWithAjax(`/admin/item/${item_id}/edit`,send_item_id,"Edit Item");
+  let send_item_id = {id:item_id};
+  modal_dilog.classList.add('modal-xl');
+  editFormWithAjax(`/admin/item/edit`,send_item_id,"Edit Item");
 });
+
+function modalLayoutReset(){
+  let modal_dilog = document.querySelector("#masterModal .modal-dialog");
+  modal_dilog.classList.remove('modal-xl');
+}
