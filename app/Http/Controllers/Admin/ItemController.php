@@ -19,15 +19,15 @@ class ItemController extends Controller
 
     public function reload()
     {
-        $items = Item::orderBy('name', 'ASC')->paginate(8);
+        $items = Item::orderBy('name', 'ASC')->paginate(6);
         $item_categories = ItemCategory::orderBy('name', 'ASC')->get(['id','name']);
         $returnHTML = view('admin.item.reload')->with(['items'=>$items,'item_categories'=>$item_categories])->render();
-        return response()->json(array('success' => true, 'html'=>$returnHTML));
+        return response()->json(['success' => true, 'html'=>$returnHTML]);
     }
 
     public function index()
     {
-        $items = Item::orderBy('name', 'ASC')->paginate(8);
+        $items = Item::orderBy('name', 'ASC')->paginate(6);
         $item_categories = ItemCategory::orderBy('name', 'ASC')->get(['id','name']);
         return view('admin.item.index', compact('items', 'item_categories'));
     }
@@ -55,30 +55,23 @@ class ItemController extends Controller
             'name' => Rule::unique('items')->where(function ($query) use ($category_id) {
                 return $query->where('item_category_id', $category_id);
             }),
+            'name' => 'required',
             'details' => 'max:191',
         ]);
         if ($validator->fails()) {
             return response()->json(['errors'=>$validator->errors()->all()]);
-        } else {
-            if ($request->hasFile('image_url')) {
-                $photo = $request->file('image_url');
-                $photoname = $photo->getClientOriginalName();
-                $photoname = $this->item_code_number($request->name).'-'.$photoname;
-                $photo->move('uploads/item/', $photoname);
-            } else {
-                $photoname = null;
-            }
-            Item::create([
-        'user_id' => 1,
-        'item_code_number' => $this->item_code_number($request->name),
-        'item_category_id' => $request->item_category_id,
-        'name' => $request->name,
-        'image_url' => $photoname,
-        'details' => $request->details,
-    ]);
-            return response()->json(['success'=>'Record is successfully added']);
         }
 
+        $photoname = $this->uploadImage($request, 'image_url');
+        Item::create([
+            'user_id' => 1,
+            'item_code_number' => $this->item_code_number($request->name),
+            'item_category_id' => $request->item_category_id,
+            'name' => $request->name,
+            'image_url' => $photoname,
+            'details' => $request->details,
+    ]);
+        return response()->json(['success'=>'Record is successfully added']);
 
         // $category_id = $request->item_category;
 
@@ -111,7 +104,9 @@ class ItemController extends Controller
     public function edit()
     {
         $item = Item::find(request('id'));
-        $item_categories = ItemCategory::orderBy('name')->get(['id','name']);
+        $item_categories = ItemCategory::orderBy('name')
+        ->get(['id','name']);
+        
         $returnHTML = view('admin.item.edit')->with(['item'=>$item,'item_categories'=>$item_categories])->render();
         return response()->json(['success' => true, 'edit_html'=>$returnHTML]);
     }
@@ -183,5 +178,17 @@ class ItemController extends Controller
         $item_name = strtoupper(substr($request_name, 0, 2));
         $item_code_number =  'ITEM-'.$item_name.'-'.$count_item;
         return $item_code_number;
+    }
+
+    public function uploadImage($request, $filename)
+    {
+        if ($request->hasFile($filename)) {
+            $photo = $request->file($filename);
+            $photoname = $photo->getClientOriginalName();
+            $photoname = $this->item_code_number($request->name).'-'.$photoname;
+            $photo->move('uploads/item/', $photoname);
+            return $photoname;
+        }
+        return $photoname = null;
     }
 }

@@ -11,29 +11,23 @@ function addDataWithAjax(data_url,data_obj,error_msg_div,success_msg_div,reload_
         url: data_url,
         type: 'POST',
         dataType:'json',
-data:data_obj,//data:{param:value,},
-enctype: 'multipart/form-data',
-processData: false,  // tell jQuery not to process the data
-contentType: false,   // tell jQuery not to set contentType
-})
-    .done(function(response_data) {
+        data:data_obj,//data:{param:value,},
+        enctype: 'multipart/form-data',
+        processData: false,  // tell jQuery not to process the data
+        contentType: false,   // tell jQuery not to set contentType
+    }).done(function(response_data) {
         modalDismiss();
         if(response_data.length != 0 || response_data != null || response_data != "" ){
             if(response_data.errors){
                 $(error_msg_div).html('');
                 $.each(response_data.errors, function(key, value){
-                    $(error_msg_div).show();
-                    $(error_msg_div).append(`<li class="badge badge-danger">${value}</li>`);
-                    dismiss_alert(error_msg_div);
+                    errorBoxToggle(error_msg_div,value,dismissAlert);
                 });
-            }else{
-                reload(reload_url,div_to_reload);
-                $(success_msg_div).html('');
-                $(success_msg_div).show();
-                $(success_msg_div).append(`<li class="badge badge-success">${response_data.success}</li>`);
-                dismiss_alert(success_msg_div);
-            } 
-        }else{
+            } else {
+                    reload(reload_url,div_to_reload);
+                    successBoxToggle(success_msg_div,response_data.success,dismissAlert);
+            }
+        } else {
             console.log(response_data);
         }
     })
@@ -42,7 +36,6 @@ contentType: false,   // tell jQuery not to set contentType
     })
     .always(function() {
         $('#loading').css('display', 'none');
-
     });
 }
 
@@ -101,12 +94,6 @@ function reload(url,response_div){
     });    
 }
 
-function dismiss_alert(class_div_to_remove){
-    $(class_div_to_remove).fadeTo(2000, 500).slideUp(500, function() {
-    $(class_div_to_remove).slideUp(500);
-    });
-}
-
 function fieldsValidation(btn,fields = array()) {
     for (var i = 0; i < fields.length; i++) {
         if(fields[i].val() == "" ||fields[i].val() == "undefined" ||fields[i].val() == null){
@@ -114,4 +101,25 @@ function fieldsValidation(btn,fields = array()) {
             </div>`);
         }
     }
+}
+
+function errorBoxToggle(message_box_element,error_message,callback)
+{
+    $(message_box_element).show();
+    $(message_box_element).append(`<li class="badge badge-danger">${error_message}</li>`);
+    callback(message_box_element);
+}
+
+function successBoxToggle(message_box_element,success_message,callback)
+{
+    $(message_box_element).html('');
+    $(message_box_element).show();
+    $(message_box_element).append(`<li class="badge badge-success">${success_message}</li>`);
+    callback(message_box_element);
+}
+
+function dismissAlert(element){
+    $(element).fadeTo(2000, 500).slideUp(500, function() {
+    $(element).slideUp(500);
+    });
 }

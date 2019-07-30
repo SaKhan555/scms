@@ -72,7 +72,7 @@
 		<div class="form-group">
 		<label>Item Category <span>*</span> </label>
 		<select name="item_category" id="item_category" class="form-control" required="true" autofocus="autofocus">
-		<option selected disabled value="">Select Item Category</option>
+		<option selected value="" >Select Item Category</option>
 		@foreach($item_categories as $item_category)
 		<option value="{{ $item_category->id }}">{{ $item_category->name }}</option>
 		@endforeach
@@ -92,7 +92,7 @@
 		</div>
 		<div class="form-group text-right">
 		<button type="button" data-dismiss="modal" class="btn btn-danger btn-sm">Cancel <i class="fa fa-times"></i></button>
-		<button type="button" class="btn btn-success btn-sm" id="btn_add">Submit <i class="fa fa-check"></i></button>
+		<button type="button" class="btn btn-success btn-sm" id="btn_add">Add Item <i class="fa fa-check"></i></button>
 		</div>
 		<hr />
 		<code>Note: Item code will generate automatically by adding item.</code>
