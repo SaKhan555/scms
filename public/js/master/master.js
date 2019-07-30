@@ -123,3 +123,17 @@ function dismissAlert(element){
     $(element).slideUp(500);
     });
 }
+
+function requireElements(elements = array())
+{
+    let error_message = '';
+    for(let i = 0; i < elements.length; i++) {
+        if(elements[i].val() == "" || elements[i].val() == null){
+            error_message += elements[i].attr('name').toUpperCase() + ' field is required. <br />';
+        }
+    }
+    if(error_message != "") {
+        modalInit(`<p class='alert alert-danger'>${error_message}</p>`,'Error!');
+        return true;
+    }
+}
