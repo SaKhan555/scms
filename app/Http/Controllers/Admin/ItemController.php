@@ -52,10 +52,9 @@ class ItemController extends Controller
         $category_id = $request->item_category_id;
         $validator = \Validator::make($request->all(), [
             'item_category_id' => 'required',
-            'name' => Rule::unique('items')->where(function ($query) use ($category_id) {
+            'name' => ['required',Rule::unique('items')->where(function ($query) use ($category_id) {
                 return $query->where('item_category_id', $category_id);
-            }),
-            'name' => 'required',
+            })],
             'details' => 'max:191',
         ]);
         if ($validator->fails()) {
