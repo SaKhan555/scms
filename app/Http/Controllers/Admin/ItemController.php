@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\File;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 use App\Admin\ItemCategory;
 use App\Admin\Item;
 
@@ -50,16 +51,17 @@ class ItemController extends Controller
     public function store(Request $request)
     {
         $category_id = $request->item_category_id;
-        $validator = \Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'item_category_id' => 'required',
-            'name' => ['required',Rule::unique('items')->where(function ($query) use ($category_id) {
+            'name' => ['required',Rule::unique('items')
+            ->where(function ($query) use ($category_id) {
                 return $query->where('item_category_id', $category_id);
             })],
-            'details' => 'max:191',
         ]);
         if ($validator->fails()) {
             return response()->json(['errors'=>$validator->errors()->all()]);
         }
+
 
         $photoname = $this->uploadImage($request, 'image_url');
         Item::create([
@@ -71,15 +73,6 @@ class ItemController extends Controller
             'details' => $request->details,
     ]);
         return response()->json(['success'=>'Record is successfully added']);
-
-        // $category_id = $request->item_category;
-
-    // $this->validate($request,[
-    //     'item_category' => 'required',
-    //     'name' => Rule::unique('items')->where(function ($query) use ($category_id) {
-    //         return $query->where('item_category_id',$category_id);
-    //     }),
-    // ]);
     }
 
     /**
@@ -117,25 +110,28 @@ class ItemController extends Controller
     * @param  int  $id
     * @return \Illuminate\Http\Response
     */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        $category_id = $request->item_category;
-        $this->validate($request, [
-        'item_category' => 'required',
-        'name' => Rule::unique('items')->ignore($id)->where(function ($query) use ($category_id) {
-            return $query->where('item_category_id', $category_id);
-        }),
+        $category_id = $request->item_category_id;
+        $e_validator = Validator::make($request->all(), [
+            'item_category_id' => 'required',
+            'name' => ['required',Rule::unique('items')->ignore($request->id)
+            ->where(function ($query) use ($category_id) {
+                return $query->where('item_category_id', $category_id);
+            })],
+        ]);
+        if ($e_validator->fails()) {
+            return response()->json(['errors'=>$e_validator->errors()->all()]);
+        }
 
-    ]);
+        $item = Item::find($request->id);
 
-        $item = Item::find($id);
-
-        if ($request->hasfile('image')) {
+        if ($request->hasfile('image_url')) {
             if ($item->image_url != '' && file_exists(public_path().'/uploads/item/'.$item->image_url)) {
                 unlink(public_path().'/uploads/item/'.$item->image_url);
             }
 
-            $photo = $request->file('image');
+            $photo = $request->file('image_url');
             $photoname = $photo->getClientOriginalName();
             $photoname = $this->item_code_number($request->name).'-'.$photoname;
             $photo->move('uploads/item/', $photoname);
@@ -144,14 +140,14 @@ class ItemController extends Controller
         }
 
         $item->update([
-        'user_id' => '1',
-        'item_category_id' => $request->item_category,
+        'user_id' => 1,
+        'item_category_id' => $request->item_category_id,
         'name' => $request->name,
         'image_url' => $photoname,
         'details' => $request->details,
     ]);
 
-        return redirect()->route('admin.item.index')->with('status', 'updated.');
+    return response()->json(['success'=>'Record is successfully updated']);
     }
 
     /**

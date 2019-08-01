@@ -21,7 +21,7 @@ $(document).on("click", "#btn_add", function(event){
                 modalDismiss();
                 $('#errors').show();
                 $('#errors').append(`<li class="badge badge-danger">${value}</li>`);
-                dismiss_alert('#errors');
+                dismissAlert('#errors');
             });
         }else{
             modalDismiss();
@@ -29,7 +29,7 @@ $(document).on("click", "#btn_add", function(event){
             $('#success_msg').show();
             $('#success_msg').append('<li class="badge badge-success">'+response_data.success+'</li>');
             reload('/admin/city/reload','reload_div');
-            dismiss_alert('#success_msg');
+            dismissAlert('#success_msg');
         } 
     });
 });

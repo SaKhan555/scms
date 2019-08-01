@@ -28,7 +28,7 @@ function addDataWithAjax(data_url,data_obj,error_msg_div,success_msg_div,reload_
                     successBoxToggle(success_msg_div,response_data.success,dismissAlert);
             }
         } else {
-            console.log(response_data);
+            modalInit(response_data,'Error!');
         }
     })
     .fail(function() {
@@ -53,6 +53,40 @@ $.ajax({
         modalInit(`<h6 class='alert alert-danger'>Something went wrong try Again</h6><hr />`,`Error <i class="fas fa-exclamation-triangle"></i>`);  
     }
 });
+}
+
+function updateDataWithAjax(data_url,data_obj,error_msg_div,success_msg_div,reload_url,div_to_reload){
+    $('#loading').css('display', 'block');
+    $.ajax({
+        url: data_url,
+        type:"POST",
+        dataType:'json',
+        data:data_obj,//data:{param:value,},
+        enctype: 'multipart/form-data',
+        processData: false,  // tell jQuery not to process the data
+        contentType: false,   // tell jQuery not to set contentType
+    }).done(function(response_data) {
+        modalDismiss();
+        if(response_data.length != 0 || response_data != null || response_data != "" ){
+            if(response_data.errors){
+                $(error_msg_div).html('');
+                $.each(response_data.errors, function(key, value){
+                    errorBoxToggle(error_msg_div,value,dismissAlert);
+                });
+            } else {
+                    reload(reload_url,div_to_reload);
+                    successBoxToggle(success_msg_div,response_data.success,dismissAlert);
+            }
+        } else {
+            modalInit(response_data,'Error!');
+        }
+    })
+    .fail(function() {
+        console.log("error");
+    })
+    .always(function() {
+        $('#loading').css('display', 'none');
+    });
 }
 
 
@@ -80,8 +114,9 @@ function modalDismiss(){
     $('.modal-backdrop').removeClass('modal-backdrop');
 }
 
-function reload(url,response_div){
-    if( url == "" || response_div == "" || response_div == "undefined"){
+function reload(url,response_div)
+{
+    if( url == "" || response_div == "" || response_div == "undefined") {
         modalInit(`<h6 class='alert alert-danger'>URL and Response Div is required.!</h6><hr />`,`Error <i class="fas fa-exclamation-triangle"></i>`);  
         return;
     }
