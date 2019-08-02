@@ -37,19 +37,15 @@
 							{{ ucfirst($item->item_category->name) }}
 						</td>
 						<td class="text-center">
-							<a href="{{ route('admin.item.show',[$item->id]) }}" class="btn btn-info btn-sm">
+							<button class="btn btn-info btn-sm btn_view" data-id="{{ $item->id }}">
 								View <i class="fa fa-eye"></i>
-							</a>
+							</button>
 							<button type="button" data-id="{{ $item->id }}" class="btn btn-sm btn-primary btn_edit">Edit
 								<i class="fa fa-edit"></i></button>
 
-							<form action="{{ route('admin.item.destroy',[$item->id]) }}" method="POST"
-								accept-charset="utf-8" style="display: inline-block !important;">
-								@method('Delete')
-								{{ csrf_field() }}
-								<button type="submit" class="btn btn-danger btn-sm">
-									Delete <i class="fa fa-trash"></i>
-								</button>
+							<button type="button" data-id="{{ $item->id }}" class="btn btn-danger btn-sm btn_delete">
+								Delete <i class="fa fa-trash"></i>
+							</button>
 							</form>
 						</td>
 					</tr>

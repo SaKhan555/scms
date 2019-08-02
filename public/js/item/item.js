@@ -53,6 +53,28 @@ $(document).on('click','#btn_update', function(){
     let sendData = data;
     updateDataWithAjax('/admin/item/update',sendData,"#errors","#success_msg","/admin/item/reload","reload_div");
 });
+$(document).on("click", ".btn_delete", function(event){
+  let id = $(this).attr('data-id');
+    modalInit(delete_data,'Delete Item');
+    let modal_dilog = document.querySelector("#masterModal .modal-dialog");
+    modal_dilog.classList.remove('modal-xl');
+    $('#btn_delete').attr('data-id',id);
+});
+
+
+$(document).on('click','#btn_delete',function(){
+  let id = $(this).attr('data-id');
+    let data_obj = {id:id};
+    deleteDataWithAjax(data_obj,'/admin/item/delete','/admin/item/reload','reload_div');    
+});
+
+$(document).on('click','.btn_view',function(){
+  let modal_dilog = document.querySelector("#masterModal .modal-dialog");
+  modal_dilog.classList.add('modal-xl');
+  let id = $(this).attr('data-id');
+    let data_obj = {id:id};
+    viewDataWithAjax('/admin/item/show',data_obj,'View');
+});
 
 function modalLayoutReset(){
   let modal_dilog = document.querySelector("#masterModal .modal-dialog");

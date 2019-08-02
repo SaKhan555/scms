@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\File;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 use App\Admin\ItemCategory;
@@ -66,7 +65,7 @@ class ItemController extends Controller
         $photoname = $this->uploadImage($request, 'image_url');
         Item::create([
             'user_id' => 1,
-            'item_code_number' => $this->item_code_number($request->name),
+            'item_code_number' => $this->itemCodeNumber($request->name),
             'item_category_id' => $request->item_category_id,
             'name' => $request->name,
             'image_url' => $photoname,
@@ -81,10 +80,11 @@ class ItemController extends Controller
     * @param  int  $id
     * @return \Illuminate\Http\Response
     */
-    public function show($id)
+    public function show()
     {
-        $item = Item::find($id);
-        return view('admin.item.show', compact('item'));
+        $item = Item::find(request('id'));
+        $returnHTML = view('admin.item.show', compact('item'))->render();
+        return response()->json(['success' => true, 'html'=>$returnHTML]);
     }
 
     /**
@@ -98,8 +98,9 @@ class ItemController extends Controller
         $item = Item::find(request('id'));
         $item_categories = ItemCategory::orderBy('name')
         ->get(['id','name']);
-        
-        $returnHTML = view('admin.item.edit')->with(['item'=>$item,'item_categories'=>$item_categories])->render();
+        $returnHTML = view('admin.item.edit')
+        ->with(['item'=>$item,'item_categories'=>$item_categories])
+        ->render();
         return response()->json(['success' => true, 'edit_html'=>$returnHTML]);
     }
 
@@ -133,7 +134,7 @@ class ItemController extends Controller
 
             $photo = $request->file('image_url');
             $photoname = $photo->getClientOriginalName();
-            $photoname = $this->item_code_number($request->name).'-'.$photoname;
+            $photoname = $this->itemCodeNumber($request->name).'-'.$photoname;
             $photo->move('uploads/item/', $photoname);
         } else {
             $photoname = $item->image_url;
@@ -147,7 +148,7 @@ class ItemController extends Controller
         'details' => $request->details,
     ]);
 
-    return response()->json(['success'=>'Record is successfully updated']);
+        return response()->json(['success'=>'Record is successfully updated']);
     }
 
     /**
@@ -156,12 +157,19 @@ class ItemController extends Controller
     * @param  int  $id
     * @return \Illuminate\Http\Response
     */
-    public function destroy($id)
+    public function destroy()
     {
-//
+    $item = Item::find(request('id'));
+    if ($item) {
+        if ($item->image_url != '' && file_exists(public_path().'/uploads/item/'.$item->image_url)) {
+            unlink(public_path().'/uploads/item/'.$item->image_url);
+        }
+        $item->delete();
+        return response()->json(['success'=>'Record is successfully deleted']);
     }
+}
 
-    public function item_code_number($request_name)
+    public function itemCodeNumber($request_name)
     {
         $count_item = Item::count();
         ++$count_item; // add 1;
@@ -180,7 +188,7 @@ class ItemController extends Controller
         if ($request->hasFile($filename)) {
             $photo = $request->file($filename);
             $photoname = $photo->getClientOriginalName();
-            $photoname = $this->item_code_number($request->name).'-'.$photoname;
+            $photoname = $this->itemCodeNumber($request->name).'-'.$photoname;
             $photo->move('uploads/item/', $photoname);
             return $photoname;
         }

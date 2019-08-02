@@ -97,7 +97,7 @@ reload('/admin/city/reload','reload_div');
      $('#success_msg').html('');
     $('#success_msg').show();
     $('#success_msg').append(`<li class="badge badge-success">${response_data.success}</li>`);
-    dismiss_alert('#success_msg');
+    dismissAlert('#success_msg');
   }
   });
 });

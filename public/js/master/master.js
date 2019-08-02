@@ -88,13 +88,44 @@ function updateDataWithAjax(data_url,data_obj,error_msg_div,success_msg_div,relo
         $('#loading').css('display', 'none');
     });
 }
-
+function deleteDataWithAjax(data_object,url,reload_url,reload_div)
+{
+    $.ajax({
+          url: url,
+          type: 'Delete',
+          data: data_object,
+      })
+      .done(function(response_data) {
+      if(response_data.success){
+        modalDismiss();
+        reload(reload_url,reload_div);
+         $('#success_msg').html('');
+        $('#success_msg').show();
+        $('#success_msg').append(`<li class="badge badge-success">${response_data.success}</li>`);
+        dismissAlert('#success_msg');
+      }
+      });
+}
+function viewDataWithAjax(url,data_obj,title){
+    $.ajax({
+        url: url,   // abc/id/edit
+        type: 'POST',
+        data:data_obj,
+    })
+    .done(function(response) {
+        if(response.success){
+            modalInit(response.html, title);  
+        }else{
+            modalInit(`<h6 class='alert alert-danger'>Something went wrong try Again</h6><hr />`,`Error <i class="fas fa-exclamation-triangle"></i>`);  
+        }
+    });
+    }
 
 var delete_data = `
 <div class="col-md-12">
 <h6 class="text-center text-danger" style="margin-bottom: 20px;">Are you sure to Delete this?</h6>
 <div class="row" style="border-bottom:1px solid #e4e4e4;"></div>
-<div class="float-right mt-2">
+<div class="float-right mt-2 mb-2">
 <button type="button" data-dismiss="modal" class="btn btn-danger btn-sm">Cancel</button>
 <button type="button" class="btn btn-success btn-sm" id="btn_delete">Delete</button>
 </div>

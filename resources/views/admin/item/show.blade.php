@@ -1,11 +1,3 @@
-@extends('template.master')
-@section('title', 'Item')
-<style type="text/css" media="screen">
-	.card-body span {
-		border-bottom: 1px solid grey;
-	}
-</style>
-@section('content')
 <div class="card">
 	<div class="card-header">
 		<h6 class="float-left">Item {{ ucfirst($item->name) }} Details</h6>
@@ -65,8 +57,3 @@
 		</div>
 	</div>
 </div>
-<a href="{{ route('admin.item.index') }}" class="btn btn-danger btn-sm mt-5" title="Go Back">Back</a>
-@endsection
-@section('script')
-<script src="{{ asset('js/item/item.js') }}" type="text/javascript" charset="utf-8" async defer></script>
-@endsection
